@@ -44,7 +44,7 @@ int ADC_Read(char channel)
 	return ADC_value;		/* return digital value */
 } 
 
-/*
+
 int ADC_Value;
 int ADC_Value2;
 
@@ -81,50 +81,29 @@ void tickSM()
 			
 			if ( ADC_Value < 400)
 			{
-				USART_Send(0x06,0);
+				USART_Send(0x01,0);
 				PORTB = 0x02;
 				USART_Flush(0);
 			}
 			
 			if ( ADC_Value > 1000)
 			{
-				USART_Send(0x09,0);
+				USART_Send(0x02,0);
 				PORTB = 0x02;
 				USART_Flush(0);
 			}
 				
 			
-			if ( ADC_Value2 < 400) //forward
-			{
-				USART_Send(0x05,0);
-				PORTB = 0x01;
-				USART_Flush(0);
-			}
-			
-			else if ( ADC_Value2 > 1000) //backward
-			{
-				USART_Send(0x0A,0);
-				PORTB = 0x01;
-				USART_Flush(0);
-			}
-			
-			if ( (~PINC&0x03) == 0x01 )
+			if ( (~PINC&0x03) == 0x01 ))
 			{
 				USART_Send(0x10,0);
 				PORTB = 0x03;
 				USART_Flush(0);
 			}
 			
-			if ( (~PINC&0x03) == 0x02 )
+			if ( (~PINC&0x03) == 0x02 ))
 			{
 				USART_Send(0x20,0);
-				PORTB = 0x03;
-				USART_Flush(0);
-			}
-			
-			if ( (~PINC&0x03) == 0x03 )
-			{
-				USART_Send(0x30,0);
 				PORTB = 0x03;
 				USART_Flush(0);
 			}
@@ -143,7 +122,7 @@ void tickSM()
 		break;
 		case send:
 		
-		if (USART_IsSendReady(0) && !(ADC_Value< 400) && !(ADC_Value > 1000) && !(ADC_Value2< 400) && !(ADC_Value2 > 1000)&& !((~PINC&0x03)== 0x01)&& !((~PINC&0x03)== 0x02)&& !((~PINC&0x03)== 0x03))
+		if (USART_IsSendReady(0) && !(ADC_Value< 400) && !(ADC_Value > 1000)&& !((~PINC&0x03)== 0x01)&& !((~PINC&0x03)== 0x02))
 		{
 			USART_Send(0x00,0);
 			PORTB = 0x00;
@@ -178,130 +157,7 @@ int main(void)
 	}
 }
 
-*/
 
 
-enum States { start, recieve, run } state;
 
-
-void tickSM()
-{
-	switch (state) //transitions
-	{
-		case start:
-		state = recieve;
-		break;
-		case recieve:
-		state = run;
-		break;
-		case run:
-		state = recieve;
-		break;
-		default:
-		break;
-		
-	}
-	
-	switch (state) //actions
-	{
-		case start:
-		TimerSet(3);
-		break;
-		case recieve:
-		if ( USART_HasReceived(0) )
-		{
-			unsigned char tmp = 0x00;
-			unsigned char tmp2 = 0x00;
-			tmp = USART_Receive(0);
-		
-		
-		
-				if ( (~PINA&0x01) == 0 )
-				{
-					PORTB = tmp;
-				}
-				
-				if ( (~PINA&0x01) == 1 )
-				
-				{
-					PORTB = 0;
-				}	
-				
-				
-				
-			if ( tmp == 0x20)
-				{
-					OCR1A = 165;
-					
-				}
-
-			
-			if ( tmp == 0x10)
-			{
-				
-				OCR1A = 280;
-			}
-			
-			if (tmp == 0x30)
-			{
-				PORTC = 0x01;
-			}
-			
-			else 
-			{
-				PORTC = 0x00;
-			}
-			
-		
-			USART_Flush(0);
-			break;
-		
-		}
-		
-		break;
-		case run:
-		//PORTA = tmp;
-		break;
-	}
-	
-
-	
-}
-
-
-int main(void)
-{
-	DDRD |= (1<<PD5);	
-	TCNT1 = 0;		
-	ICR1 = 2499;
-	
-	
-	TCCR1A = (1<<WGM11)|(1<<COM1A1);
-	TCCR1B = (1<<WGM12)|(1<<WGM13)|(1<<CS10)|(1<<CS11);
-	
-	DDRB = 0xFF; PORTB =0x00;
-	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x00;
-	//DDRD = 0xFF, PORTD = 0x00;
-	
-	// DDRD = 0xFF; PORTD = 0x00;
-	
-	initUSART(0);
-	
-	//TimerSet(3);
-	TimerOn();
-	
-	unsigned char temp = 0;
-	while (1)
-	{
-		tickSM();
-		while(!TimerFlag);
-		TimerFlag = 0;
-		
-		
-		
-	}
-	
-	
-}
 
