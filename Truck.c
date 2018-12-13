@@ -1,5 +1,5 @@
 /*
- * Bluetooth + motors.c
+ * Truck.c
  *
  * Created: 11/13/2018 10:43:15 AM
  * Author : Alvaro
@@ -44,141 +44,7 @@ int ADC_Read(char channel)
 	return ADC_value;		/* return digital value */
 } 
 
-/*
-int ADC_Value;
-int ADC_Value2;
 
-enum States {start, toggle, send} state;
-
-void tickSM()
-{
-	switch (state)
-	{//Transitions
-		case start:
-		state = toggle;
-		break;
-		case toggle:
-		state = send;
-		break;
-		case send:
-		state = toggle;
-		default:
-		state = start;
-		break;
-	}
-	switch(state)
-	{//Actions
-		case start:
-		TimerSet(50);
-		break;
-		case toggle:
-		
-		
-		if (USART_IsSendReady(0))
-		{
-			ADC_Value = ADC_Read(1);
-			ADC_Value2 = ADC_Read(0);
-			
-			if ( ADC_Value < 400)
-			{
-				USART_Send(0x06,0);
-				PORTB = 0x02;
-				USART_Flush(0);
-			}
-			
-			if ( ADC_Value > 1000)
-			{
-				USART_Send(0x09,0);
-				PORTB = 0x02;
-				USART_Flush(0);
-			}
-				
-			
-			if ( ADC_Value2 < 400) //forward
-			{
-				USART_Send(0x05,0);
-				PORTB = 0x01;
-				USART_Flush(0);
-			}
-			
-			else if ( ADC_Value2 > 1000) //backward
-			{
-				USART_Send(0x0A,0);
-				PORTB = 0x01;
-				USART_Flush(0);
-			}
-			
-			if ( (~PINC&0x03) == 0x01 )
-			{
-				USART_Send(0x10,0);
-				PORTB = 0x03;
-				USART_Flush(0);
-			}
-			
-			if ( (~PINC&0x03) == 0x02 )
-			{
-				USART_Send(0x20,0);
-				PORTB = 0x03;
-				USART_Flush(0);
-			}
-			
-			if ( (~PINC&0x03) == 0x03 )
-			{
-				USART_Send(0x30,0);
-				PORTB = 0x03;
-				USART_Flush(0);
-			}
-			
-			
-		}
-		
-		
-		
-		else  
-		{
-			//USART_Send(0x00,0);
-			PORTB = 0x00;
-		}
-		
-		break;
-		case send:
-		
-		if (USART_IsSendReady(0) && !(ADC_Value< 400) && !(ADC_Value > 1000) && !(ADC_Value2< 400) && !(ADC_Value2 > 1000)&& !((~PINC&0x03)== 0x01)&& !((~PINC&0x03)== 0x02)&& !((~PINC&0x03)== 0x03))
-		{
-			USART_Send(0x00,0);
-			PORTB = 0x00;
-			USART_Flush(0);
-		}
-		
-		break;
-	}
-}
-
-int main(void)
-{
-	initUSART(0);
-	
-	ADC_Init();
-
-	DDRB = 0xFF; PORTB = 0x00;
-	DDRC = 0x00; PORTC = 0xFF;
-
-
-	//TimerSet(50);
-	TimerOn();
-	
-
-	while (1)
-	{
-		tickSM();
-		
-		while (!TimerFlag) {}
-		TimerFlag = 0;
-		
-	}
-}
-
-*/
 
 
 enum States { start, recieve, run } state;
@@ -216,35 +82,22 @@ void tickSM()
 		
 		
 		
-				if ( (~PINA&0x01) == 0 )
-				{
-					PORTB = tmp;
-				}
 				
-				if ( (~PINA&0x01) == 1 )
-				
-				{
-					PORTB = 0;
-				}	
+			PORTB = tmp;
+					
 				
 				
 				
 			if ( tmp == 0x20)
-				{
-					OCR1A = 165;
+			{
+				OCR1A = 165;
 					
-				}
+			}
 
-			
 			if ( tmp == 0x10)
 			{
 				
 				OCR1A = 280;
-			}
-			
-			if (tmp == 0x30)
-			{
-				PORTC = 0x01;
 			}
 			
 			else 
