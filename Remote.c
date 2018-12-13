@@ -1,5 +1,5 @@
 /*
- * Bluetooth + motors.c
+ * Remote.c
  *
  * Created: 11/13/2018 10:43:15 AM
  * Author : Alvaro
